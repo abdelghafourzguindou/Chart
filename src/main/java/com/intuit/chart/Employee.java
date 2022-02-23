@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,19 +35,23 @@ public abstract class Employee {
         this.holidays = new HashSet<>();
     }
 
-    protected void addHoliday(Holiday holiday) {
+    public void addHoliday(Holiday holiday) {
         this.holidays.add(holiday);
     }
 
-    protected void removeHoliday(UUID holidayId) {
+    public void removeHoliday(UUID holidayId) {
         this.holidays.stream()
                 .filter(holiday -> holiday.getId().equals(holidayId))
                 .findFirst()
                 .ifPresent(holiday -> this.holidays.remove(holiday));
     }
 
-    protected void shiftHoliday(UUID holidayId, LocalDate startDate, LocalDate endDate) {
+    public void shiftHoliday(UUID holidayId, LocalDate startDate, LocalDate endDate) {
         this.removeHoliday(holidayId);
         this.addHoliday(new Holiday(holidayId, startDate, endDate));
+    }
+
+    protected Optional<Employee> findById(UUID id) {
+        return (id.equals(this.id)) ? Optional.of(this): Optional.empty();
     }
 }

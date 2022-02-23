@@ -1,4 +1,4 @@
-package com.intuit.chart;
+package com.intuit.chart.exceptions;
 
 public class IllegalHolidayArgumentException extends IllegalArgumentException {
 

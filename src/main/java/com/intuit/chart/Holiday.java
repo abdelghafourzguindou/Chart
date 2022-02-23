@@ -1,5 +1,6 @@
 package com.intuit.chart;
 
+import com.intuit.chart.exceptions.IllegalHolidayArgumentException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

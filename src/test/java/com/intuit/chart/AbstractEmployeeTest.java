@@ -1,5 +1,6 @@
 package com.intuit.chart;
 
+import com.intuit.chart.exceptions.IllegalHolidayArgumentException;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,8 @@ import org.meanbean.test.BeanTester;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 abstract class AbstractEmployeeTest<T extends Employee> {
 
@@ -68,10 +69,17 @@ abstract class AbstractEmployeeTest<T extends Employee> {
 
     @Test
     void scheduled_holiday_with_illegal_arguments_should_throw_IllegalHolidayArgumentException() {
-       assertThatExceptionOfType(IllegalHolidayArgumentException.class).isThrownBy(() -> instance().addHoliday(new Holiday(null, LocalDate.now())));
-       assertThatExceptionOfType(IllegalHolidayArgumentException.class).isThrownBy(() -> instance().addHoliday(new Holiday(LocalDate.now(), null)));
-       assertThatExceptionOfType(IllegalHolidayArgumentException.class).isThrownBy(() -> instance().addHoliday(new Holiday(LocalDate.now().plusMonths(1), LocalDate.now())));
-       assertThatExceptionOfType(IllegalHolidayArgumentException.class).isThrownBy(() -> instance().addHoliday(new Holiday(LocalDate.now().minusMonths(9), LocalDate.now().minusMonths(5))));
+        assertThatThrownBy(() -> new Holiday(null, LocalDate.now())).isInstanceOf(IllegalHolidayArgumentException.class);
+        assertThatThrownBy(() -> new Holiday(LocalDate.now(), null)).isInstanceOf(IllegalHolidayArgumentException.class);
+        assertThatThrownBy(() -> new Holiday(LocalDate.now().plusMonths(1), LocalDate.now())).isInstanceOf(IllegalHolidayArgumentException.class);
+        assertThatThrownBy(() -> new Holiday(LocalDate.now().minusMonths(2), LocalDate.now().minusMonths(1))).isInstanceOf(IllegalHolidayArgumentException.class);
+    }
+
+    @Test
+    void should_find_employee_by_id() {
+        Optional<Employee> filteredEmployee = instance().findById(instance().getId());
+        assertThat(filteredEmployee).isPresent();
+        assertSame(filteredEmployee.get(), instance());
     }
 
     protected abstract T instance();

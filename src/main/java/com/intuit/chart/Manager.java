@@ -56,4 +56,13 @@ public class Manager extends ManagedEmployee<Director> implements Manage<SimpleE
             this.subordinates = new HashSet<>();
         }
     }
+
+    @Override
+    protected Optional<Employee> findById(UUID id) {
+        Optional<Employee> employee = super.findById(id);
+        if (employee.isPresent()) {
+            return employee;
+        }
+        return findByIdInSubordinates(id);
+    }
 }
