@@ -3,6 +3,7 @@ package com.intuit.chart;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -29,7 +30,6 @@ class ManagerTest {
 
         contractor.setManager(manager);
         manager.addSubordinate(contractor);
-        manager.setManager(director);
         director.addSubordinate(manager);
 
         assertThat(manager.getSubordinates()).contains(contractor);
@@ -37,31 +37,34 @@ class ManagerTest {
     }
 
     @Test
-    void director_can_change_team_without_transferring_their_past_subordinates_to_the_new_team() {
-        Optional<Method> changeTeam = Arrays.stream(Director.class.getMethods())
-                .filter(method -> "changeTeam".equals(method.getName()))
+    void manager_can_change_team_without_transferring_their_past_subordinates_to_the_new_team() {
+        Optional<Method> move = Arrays.stream(Manager.class.getMethods())
+                .filter(method -> "move".equals(method.getName()))
                 .findFirst();
 
-        assertThat(changeTeam).isPresent();
+        assertThat(move).isPresent();
 
         Contractor contractor = new Contractor();
-        ManagedPermanent managedPermanent = new ManagedPermanent();
+        Permanent permanent1 = new Permanent();
+        Permanent permanent2 = new Permanent();
+        contractor.setStartDate(LocalDate.now().minusMonths(9));
+        permanent1.setStartDate(LocalDate.now().minusMonths(5));
+        permanent2.setStartDate(LocalDate.now().minusMonths(2));
         Manager manager = new Manager();
         Director director1 = new Director();
         Director director2 = new Director();
 
-        contractor.setManager(manager);
-        managedPermanent.setManager(manager);
-        manager.addSubordinate(contractor).addSubordinate(managedPermanent);
-        manager.setManager(director1);
+        manager.addSubordinate(contractor);
+        manager.addSubordinate(permanent1);
+        manager.addSubordinate(permanent2);
         director1.addSubordinate(manager);
 
-        manager.changeTeam(director2);
+        manager.move(director2);
 
         assertThat(manager.getSubordinates()).isEmpty();
         assertThat(manager.getManager()).isEqualTo(director2);
         assertThat(director2.getSubordinates()).contains(manager);
         assertThat(director1.getSubordinates()).doesNotContain(manager);
-        assertThat(director2.getSubordinates().stream().map(Managed::getInfo).map(Employee::getId)).contains(manager.getId());
+        assertThat(director1.getSubordinates().stream().map(Employee::getId)).contains(permanent1.getId());
     }
 }

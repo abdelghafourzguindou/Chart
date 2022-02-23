@@ -1,49 +1,55 @@
 package com.intuit.chart;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-public final class Director extends Manager {
+public final class Director extends ManagedEmployee<VicePresident> implements Manage<Manager>, MoveTeam<VicePresident> {
+
+    private Set<Manager> subordinates;
 
     public Director() {
         super(Role.Management.DIRECTOR);
+        this.subordinates = new HashSet<>();
     }
 
     private Director(UUID id) {
         super(id, Role.Management.DIRECTOR);
+        this.subordinates = new HashSet<>();
+    }
+
+    private Director cloneFromManager(Manager manager) {
+        Director director = new Director(manager.getId());
+        director.setFirstName(manager.getFirstName());
+        director.setLastName(manager.getLastName());
+        director.setStartDate(manager.getStartDate());
+        director.setHolidays(manager.getHolidays());
+        return director;
     }
 
     @Override
-    public void changeTeam(Manage manager) {
-        Optional<Employee> managerToBeDirector = this.getSubordinates().parallelStream()
-                .map(Managed::getInfo)
-                .filter(employee -> employee.getRole().equals(Role.Management.MANAGER))
-                .min(Comparator.comparing(Employee::getStartDate));
+    public Director instance() {
+        return this;
+    }
+
+    @Override
+    public Set<Manager> getSubordinates() {
+        return this.subordinates;
+    }
+
+    @Override
+    public void move(VicePresident newVicePresident) {
+        Optional<Manager> managerToBeDirector = this.subordinates.parallelStream().min(Comparator.comparing(Employee::getStartDate));
 
         if (managerToBeDirector.isPresent()) {
-            Employee employee = managerToBeDirector.get();
-
-            Director newDirector = new Director(employee.getId());
-            newDirector.setFirstName(employee.getFirstName());
-            newDirector.setLastName(employee.getLastName());
-            newDirector.setStartDate(employee.getStartDate());
-            newDirector.setHolidays(employee.getHolidays());
-            newDirector.setManager(this.getManager());
+            Manager manager = managerToBeDirector.get();
+            manager.promoteSeniorSubordinate();
+            Director newDirector = cloneFromManager(manager);
+            this.removeSubordinate(manager);
+            newDirector.addSubordinates(this.getSubordinates());
             this.getManager().addSubordinate(newDirector);
-
-            this.getSubordinates().remove(employee);
-
-            this.getSubordinates().forEach(managed -> {
-                newDirector.addSubordinate(managed);
-                managed.setManager(newDirector);
-            });
-
-            this.cleanSubordinates();
+            this.subordinates = new HashSet<>();
         }
 
         this.getManager().removeSubordinate(this);
-        manager.addSubordinate(this);
-        this.setManager(manager);
+        newVicePresident.addSubordinate(this);
     }
 }

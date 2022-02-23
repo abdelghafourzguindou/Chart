@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,9 +28,7 @@ class DirectorTest {
         Director director = new Director();
         VicePresident vicePresident = new VicePresident();
         director.addSubordinate(manager);
-        manager.setManager(director);
         vicePresident.addSubordinate(director);
-        director.setManager(vicePresident);
 
         assertThat(director.getSubordinates()).contains(manager);
         assertThat(director.getManager()).isEqualTo(vicePresident);
@@ -39,33 +37,52 @@ class DirectorTest {
 
     @Test
     void director_can_change_team_without_transferring_their_past_subordinates_to_the_new_team() {
-        Optional<Method> changeTeam = Arrays.stream(Director.class.getMethods())
-                .filter(method -> "changeTeam".equals(method.getName()))
+        Optional<Method> move = Arrays.stream(Director.class.getMethods())
+                .filter(method -> "move".equals(method.getName()))
                 .findFirst();
 
-        assertThat(changeTeam).isPresent();
+        assertThat(move).isPresent();
 
+        Contractor contractor = new Contractor();
+        Permanent permanent1 = new Permanent();
+        Permanent permanent2 = new Permanent();
         Manager manager1 = new Manager();
         Manager manager2 = new Manager();
-        Director director = new Director();
+        Director director1 = new Director();
+        Director director2 = new Director();
         VicePresident vicePresident1 = new VicePresident();
         VicePresident vicePresident2 = new VicePresident();
 
+        contractor.setStartDate(LocalDate.now().minusMonths(9));
+        permanent1.setStartDate(LocalDate.now().minusMonths(5));
+        permanent2.setStartDate(LocalDate.now().minusMonths(2));
         manager1.setStartDate(LocalDate.of(2000, 3, 12));
         manager2.setStartDate(LocalDate.of(2019, 2, 22));
 
-        director.addSubordinate(manager1).addSubordinate(manager2);
-        manager1.setManager(director);
-        manager2.setManager(director);
-        vicePresident1.addSubordinate(director);
-        director.setManager(vicePresident1);
+        manager1.addSubordinate(contractor);
+        manager1.addSubordinate(permanent1);
+        manager2.addSubordinate(permanent2);
+        director1.addSubordinate(manager1);
+        director2.addSubordinate(manager2);
+        vicePresident1.addSubordinate(director1);
+        vicePresident1.addSubordinate(director2);
 
-        director.changeTeam(vicePresident2);
+        director1.move(vicePresident2);
 
-        assertThat(director.getSubordinates()).isEmpty();
-        assertThat(director.getManager()).isEqualTo(vicePresident2);
-        assertThat(vicePresident2.getSubordinates()).contains(director);
-        assertThat(vicePresident1.getSubordinates()).doesNotContain(director);
-        assertThat(vicePresident1.getSubordinates().stream().map(Managed::getInfo).map(Employee::getId)).contains(manager1.getId());
+        assertThat(director1.getSubordinates()).isEmpty();
+        assertThat(director1.getManager()).isEqualTo(vicePresident2);
+        assertThat(vicePresident2.getSubordinates()).contains(director1);
+        assertThat(vicePresident1.getSubordinates()).doesNotContain(director1);
+        assertThat(vicePresident1.getSubordinates().stream().map(Employee::getId)).contains(manager1.getId());
+
+        Set<UUID> managerIds = vicePresident1.getSubordinates()
+                .stream()
+                .filter(director -> director.getId().equals(manager1.getId()))
+                .map(Director::getSubordinates)
+                .flatMap(Collection::stream)
+                .map(Employee::getId)
+                .collect(Collectors.toSet());
+
+        assertThat(managerIds).contains(permanent1.getId());
     }
 }

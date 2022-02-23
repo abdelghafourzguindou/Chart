@@ -26,7 +26,7 @@ class CeoTest {
     }
 
     @Test
-    void ceo_should_have_subordinates() {
+    void ceo_should_have_vice_president_subordinates() {
         Optional<Method> getSubordinates = Arrays.stream(Ceo.class.getMethods())
                 .filter(method -> "getSubordinates".equals(method.getName()))
                 .findFirst();
@@ -35,8 +35,8 @@ class CeoTest {
 
         Ceo ceo = Ceo.getCeo();
         VicePresident vicePresident = new VicePresident();
+
         ceo.addSubordinate(vicePresident);
-        vicePresident.setManager(ceo);
 
         assertThat(ceo.getSubordinates()).contains(vicePresident);
         assertThat(vicePresident.getManager()).isEqualTo(ceo);

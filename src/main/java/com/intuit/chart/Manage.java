@@ -2,17 +2,23 @@ package com.intuit.chart;
 
 import java.util.Set;
 
-public interface Manage {
+public interface Manage<T extends ManagedEmployee<? extends Employee>> {
 
-    Set<Managed> getSubordinates();
+    <K extends Employee> K instance();
 
-    default Manage addSubordinate(Managed employee) {
+    Set<T> getSubordinates();
+
+    default void addSubordinate(T employee) {
         getSubordinates().add(employee);
-        // employee.setManager(this);
-        return this;
+        employee.setManager(instance());
     }
 
-    default void removeSubordinate(Managed employee) {
+    default void addSubordinates(Set<T> employees) {
+        getSubordinates().addAll(employees);
+        employees.forEach(employee -> employee.setManager(instance()));
+    }
+
+    default void removeSubordinate(T employee) {
         getSubordinates().remove(employee);
     }
 }

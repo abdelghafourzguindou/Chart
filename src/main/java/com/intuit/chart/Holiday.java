@@ -24,6 +24,13 @@ public class Holiday {
         this.endDate = endDate;
     }
 
+    public Holiday(UUID id, LocalDate startDate, LocalDate endDate) {
+        validateArguments(startDate, endDate);
+        this.id = id;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     private void validateArguments(LocalDate startDate, LocalDate endDate) {
         if (startDate == null
                 || endDate == null

@@ -2,22 +2,12 @@ package com.intuit.chart;
 
 import java.util.*;
 
-public class Manager extends ManagedPermanent implements Manage {
+public class Manager extends ManagedEmployee<Director> implements Manage<SimpleEmployee>, MoveTeam<Director> {
 
-    private Set<Managed> subordinates;
+    private Set<SimpleEmployee> subordinates;
 
     public Manager() {
         super(Role.Management.MANAGER);
-        this.subordinates = new HashSet<>();
-    }
-
-    protected Manager(Role role) {
-        super(role);
-        this.subordinates = new HashSet<>();
-    }
-
-    protected Manager(UUID id, Role role) {
-        super(id, role);
         this.subordinates = new HashSet<>();
     }
 
@@ -26,44 +16,44 @@ public class Manager extends ManagedPermanent implements Manage {
         this.subordinates = new HashSet<>();
     }
 
-    @Override
-    public Set<Managed> getSubordinates() {
-        return subordinates;
+    private Manager cloneFromSimpleEmployee(SimpleEmployee employee) {
+        Manager manager = new Manager(employee.getId());
+        manager.setFirstName(employee.getFirstName());
+        manager.setLastName(employee.getLastName());
+        manager.setStartDate(employee.getStartDate());
+        manager.setHolidays(employee.getHolidays());
+        return manager;
     }
 
+    @Override
+    public Manager instance() {
+        return this;
+    }
 
     @Override
-    public void changeTeam(Manage manager) {
-        Optional<Employee> employeeToBeManager = this.subordinates.parallelStream()
-                .map(Managed::getInfo)
+    public Set<SimpleEmployee> getSubordinates() {
+        return this.subordinates;
+    }
+
+    @Override
+    public void move(Director newDirector) {
+        promoteSeniorSubordinate();
+        this.getManager().removeSubordinate(this);
+        newDirector.addSubordinate(this);
+    }
+
+    public void promoteSeniorSubordinate() {
+        Optional<SimpleEmployee> employeeToBeManager = this.subordinates.parallelStream()
                 .filter(employee -> employee.getRole().equals(Role.Employee.PERMANENT))
-                .max(Comparator.comparing(Employee::getStartDate));
+                .min(Comparator.comparing(Employee::getStartDate));
 
         if (employeeToBeManager.isPresent()) {
-            Employee employee = employeeToBeManager.get();
-
-            Manager newManager = new Manager(employee.getId());
-            newManager.setFirstName(employee.getFirstName());
-            newManager.setLastName(employee.getLastName());
-            newManager.setStartDate(employee.getStartDate());
-            newManager.setHolidays(employee.getHolidays());
-            newManager.setManager(this.getManager());
+            SimpleEmployee employee = employeeToBeManager.get();
+            Manager newManager = cloneFromSimpleEmployee(employee);
+            this.removeSubordinate(employee);
+            newManager.addSubordinates(this.getSubordinates());
             this.getManager().addSubordinate(newManager);
-
-            this.subordinates.remove(employee);
-
-            this.subordinates.forEach(managed -> {
-                managed.setManager(newManager);
-                newManager.addSubordinate(managed);
-            });
-
-            cleanSubordinates();
+            this.subordinates = new HashSet<>();
         }
-
-        super.changeTeam(manager);
-    }
-
-    protected void cleanSubordinates() {
-        this.subordinates = new HashSet<>();
     }
 }

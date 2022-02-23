@@ -16,7 +16,7 @@ import java.util.UUID;
 public abstract class Employee {
 
     private final UUID id;
-    @Getter private final Role role;
+    private final Role role;
     @Setter private String firstName;
     @Setter private String lastName;
     @Setter private LocalDate startDate;
@@ -32,5 +32,21 @@ public abstract class Employee {
         this.id = id;
         this.role = role;
         this.holidays = new HashSet<>();
+    }
+
+    protected void addHoliday(Holiday holiday) {
+        this.holidays.add(holiday);
+    }
+
+    protected void removeHoliday(UUID holidayId) {
+        this.holidays.stream()
+                .filter(holiday -> holiday.getId().equals(holidayId))
+                .findFirst()
+                .ifPresent(holiday -> this.holidays.remove(holiday));
+    }
+
+    protected void decalHoliday(UUID holidayId, LocalDate startDate, LocalDate endDate) {
+        this.removeHoliday(holidayId);
+        this.addHoliday(new Holiday(holidayId, startDate, endDate));
     }
 }

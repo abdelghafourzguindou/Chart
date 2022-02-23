@@ -3,9 +3,9 @@ package com.intuit.chart;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class Ceo extends Permanent implements Manage {
+public final class Ceo extends Employee implements Manage<VicePresident> {
 
-    private Set<Managed> subordinates;
+    private Set<VicePresident> subordinates;
 
     private static final Ceo ceo = new Ceo();
 
@@ -14,12 +14,17 @@ public final class Ceo extends Permanent implements Manage {
         this.subordinates = new HashSet<>();
     }
 
-    @Override
-    public Set<Managed> getSubordinates() {
-        return subordinates;
-    }
-
     public static Ceo getCeo() {
         return ceo;
+    }
+
+    @Override
+    public Ceo instance() {
+        return this;
+    }
+
+    @Override
+    public Set<VicePresident> getSubordinates() {
+        return this.subordinates;
     }
 }
