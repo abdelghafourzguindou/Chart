@@ -9,7 +9,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class CeoTest {
+class CeoTest extends AbstractEmployeeTest<Ceo> {
 
     @Test
     void ceo_should_be_one_instance() {
@@ -40,5 +40,10 @@ class CeoTest {
 
         assertThat(ceo.getSubordinates()).contains(vicePresident);
         assertThat(vicePresident.getManager()).isEqualTo(ceo);
+    }
+
+    @Override
+    protected Ceo instance() {
+        return Ceo.getCeo();
     }
 }

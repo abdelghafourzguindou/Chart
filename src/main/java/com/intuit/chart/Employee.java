@@ -45,7 +45,7 @@ public abstract class Employee {
                 .ifPresent(holiday -> this.holidays.remove(holiday));
     }
 
-    protected void decalHoliday(UUID holidayId, LocalDate startDate, LocalDate endDate) {
+    protected void shiftHoliday(UUID holidayId, LocalDate startDate, LocalDate endDate) {
         this.removeHoliday(holidayId);
         this.addHoliday(new Holiday(holidayId, startDate, endDate));
     }

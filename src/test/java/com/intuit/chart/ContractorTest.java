@@ -1,6 +1,8 @@
 package com.intuit.chart;
 
 import org.junit.jupiter.api.Test;
+import org.meanbean.lang.Factory;
+import org.meanbean.test.BeanTester;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -8,7 +10,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ContractorTest {
+class ContractorTest extends AbstractEmployeeTest<Contractor> {
+
+    private final static Contractor contractor = new Contractor();
 
     @Test
     void contractor_should_have_a_manager() {
@@ -58,5 +62,17 @@ class ContractorTest {
         assertThat(contractor.getManager()).isEqualTo(manager2);
         assertThat(manager2.getSubordinates()).contains(contractor);
         assertThat(manager1.getSubordinates()).doesNotContain(contractor);
+    }
+
+    @Override
+    protected Contractor instance() {
+        return contractor;
+    }
+
+    @Override
+    protected BeanTester getBeanTester() {
+        BeanTester beanTester = super.getBeanTester();
+        beanTester.getFactoryCollection().addFactory(Employee.class, (Factory<Employee>) Manager::new);
+        return beanTester;
     }
 }

@@ -1,15 +1,18 @@
 package com.intuit.chart;
 
 import org.junit.jupiter.api.Test;
+import org.meanbean.lang.Factory;
+import org.meanbean.test.BeanTester;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class VicePresidentTest {
+class VicePresidentTest extends AbstractEmployeeTest<VicePresident> {
+
+    private static final VicePresident vicePresident = new VicePresident();
 
     @Test
     void vice_president_should_manage_and_managed() {
@@ -25,7 +28,6 @@ class VicePresidentTest {
         assertThat(getSubordinates).isPresent();
 
         Ceo ceo = Ceo.getCeo();
-        VicePresident vicePresident = new VicePresident();
         Director director = new Director();
 
         ceo.addSubordinate(vicePresident);
@@ -37,11 +39,15 @@ class VicePresidentTest {
         assertThat(director.getManager()).isEqualTo(vicePresident);
     }
 
-    /*
-    @Test
-    void vice_president_can_not_change_team() {
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> new VicePresident().changeTeam(Ceo.getCeo()));
+    @Override
+    protected VicePresident instance() {
+        return vicePresident;
     }
-     */
+
+    @Override
+    protected BeanTester getBeanTester() {
+        BeanTester beanTester = super.getBeanTester();
+        beanTester.getFactoryCollection().addFactory(Employee.class, (Factory<Employee>) Ceo::getCeo);
+        return beanTester;
+    }
 }

@@ -1,6 +1,8 @@
 package com.intuit.chart;
 
 import org.junit.jupiter.api.Test;
+import org.meanbean.lang.Factory;
+import org.meanbean.test.BeanTester;
 
 import java.lang.reflect.Method;
 import java.time.LocalDate;
@@ -9,7 +11,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ManagerTest {
+class ManagerTest extends AbstractEmployeeTest<Manager> {
+
+    private static final Manager manager = new Manager();
 
     @Test
     void manager_should_manage_and_managed() {
@@ -66,5 +70,17 @@ class ManagerTest {
         assertThat(director2.getSubordinates()).contains(manager);
         assertThat(director1.getSubordinates()).doesNotContain(manager);
         assertThat(director1.getSubordinates().stream().map(Employee::getId)).contains(permanent1.getId());
+    }
+
+    @Override
+    protected Manager instance() {
+        return manager;
+    }
+
+    @Override
+    protected BeanTester getBeanTester() {
+        BeanTester beanTester = super.getBeanTester();
+        beanTester.getFactoryCollection().addFactory(Employee.class, (Factory<Employee>) Director::new);
+        return beanTester;
     }
 }
