@@ -36,7 +36,7 @@ public class Manager extends ManagedEmployee<Director> implements Manage<SimpleE
     }
 
     @Override
-    public void move(Director newDirector) {
+    public void moveTeam(Director newDirector) {
         promoteSeniorSubordinate();
         this.getManager().removeSubordinate(this);
         newDirector.addSubordinate(this);

@@ -7,7 +7,7 @@ public abstract class SimpleEmployee extends ManagedEmployee<Manager> implements
     }
 
     @Override
-    public void move(Manager newManager) {
+    public void moveTeam(Manager newManager) {
         this.getManager().removeSubordinate(this);
         newManager.addSubordinate(this);
     }

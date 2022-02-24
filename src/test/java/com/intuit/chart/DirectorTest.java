@@ -42,7 +42,7 @@ class DirectorTest extends AbstractEmployeeTest<Director> {
     @Test
     void director_can_change_team_without_transferring_their_past_subordinates_to_the_new_team() {
         Optional<Method> move = Arrays.stream(Director.class.getMethods())
-                .filter(method -> "move".equals(method.getName()))
+                .filter(method -> "moveTeam".equals(method.getName()))
                 .findFirst();
 
         assertThat(move).isPresent();
@@ -71,7 +71,7 @@ class DirectorTest extends AbstractEmployeeTest<Director> {
         vicePresident1.addSubordinate(director1);
         vicePresident1.addSubordinate(director2);
 
-        director1.move(vicePresident2);
+        director1.moveTeam(vicePresident2);
 
         assertThat(director1.getSubordinates()).isEmpty();
         assertThat(director1.getManager()).isEqualTo(vicePresident2);

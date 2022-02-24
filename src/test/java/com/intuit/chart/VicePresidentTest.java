@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class VicePresidentTest extends AbstractEmployeeTest<VicePresident> {
 
+    private static final Ceo ceo = Ceo.getCeo();
     private static final VicePresident vicePresident = new VicePresident();
 
     @Test
@@ -27,7 +28,6 @@ class VicePresidentTest extends AbstractEmployeeTest<VicePresident> {
         assertThat(getManager).isPresent();
         assertThat(getSubordinates).isPresent();
 
-        Ceo ceo = Ceo.getCeo();
         Director director = new Director();
 
         ceo.addSubordinate(vicePresident);

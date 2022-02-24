@@ -36,7 +36,7 @@ public final class Director extends ManagedEmployee<VicePresident> implements Ma
     }
 
     @Override
-    public void move(VicePresident newVicePresident) {
+    public void moveTeam(VicePresident newVicePresident) {
         Optional<Manager> managerToBeDirector = this.subordinates.parallelStream().min(Comparator.comparing(Employee::getStartDate));
 
         if (managerToBeDirector.isPresent()) {

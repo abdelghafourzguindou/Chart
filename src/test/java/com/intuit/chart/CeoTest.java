@@ -11,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 class CeoTest extends AbstractEmployeeTest<Ceo> {
 
+    private static final Ceo ceo = Ceo.getCeo();
+
     @Test
     void ceo_should_be_one_instance() {
-        assertSame(Ceo.getCeo(), Ceo.getCeo());
+        assertSame(ceo, ceo);
     }
 
     @Test
@@ -44,6 +46,6 @@ class CeoTest extends AbstractEmployeeTest<Ceo> {
 
     @Override
     protected Ceo instance() {
-        return Ceo.getCeo();
+        return ceo;
     }
 }

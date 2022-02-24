@@ -2,16 +2,18 @@ package com.intuit.chart.services;
 
 import com.intuit.chart.*;
 import com.intuit.chart.exceptions.EmployeeNotFoundException;
+import com.intuit.chart.exceptions.IllegalHolidayArgumentException;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 class EmployeeFilterServiceTest {
 
-    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService();
+    private static final Ceo ceo = Ceo.getCeo();
+    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService(ceo);
 
     @Test
     void should_find_employee_by_id_successfully() {
@@ -20,7 +22,7 @@ class EmployeeFilterServiceTest {
         Director director = new Director();
         VicePresident vicePresident = new VicePresident();
 
-        Ceo.getCeo().addSubordinate(vicePresident);
+        ceo.addSubordinate(vicePresident);
         vicePresident.addSubordinate(director);
         director.addSubordinate(manager);
         manager.addSubordinate(permanent);
@@ -34,9 +36,9 @@ class EmployeeFilterServiceTest {
     void find_employee_by_id_should_throw_EmployeeNotFoundException_when_id_not_match() {
         VicePresident vicePresident = new VicePresident();
 
-        Ceo.getCeo().addSubordinate(vicePresident);
+        ceo.addSubordinate(vicePresident);
 
-        assertThatExceptionOfType(EmployeeNotFoundException.class).isThrownBy(() -> employeeFilterService.findById(UUID.randomUUID()));
+        assertThatThrownBy(() -> employeeFilterService.findById(UUID.randomUUID())).isInstanceOf(EmployeeNotFoundException.class);
     }
 
     @Test
@@ -46,7 +48,7 @@ class EmployeeFilterServiceTest {
         Director director = new Director();
         VicePresident vicePresident = new VicePresident();
 
-        Ceo.getCeo().addSubordinate(vicePresident);
+        ceo.addSubordinate(vicePresident);
         vicePresident.addSubordinate(director);
         director.addSubordinate(manager);
         manager.addSubordinate(permanent);
@@ -60,8 +62,8 @@ class EmployeeFilterServiceTest {
     void find_manager_by_id_should_throw_EmployeeNotFoundException_when_id_not_match() {
         VicePresident vicePresident = new VicePresident();
 
-        Ceo.getCeo().addSubordinate(vicePresident);
+        ceo.addSubordinate(vicePresident);
 
-        assertThatExceptionOfType(EmployeeNotFoundException.class).isThrownBy(() -> employeeFilterService.findManagerById(UUID.randomUUID()));
+        assertThatThrownBy(() -> employeeFilterService.findManagerById(UUID.randomUUID())).isInstanceOf(EmployeeNotFoundException.class);
     }
 }

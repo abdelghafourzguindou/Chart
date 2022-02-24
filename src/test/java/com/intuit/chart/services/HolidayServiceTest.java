@@ -6,31 +6,32 @@ import com.intuit.chart.exceptions.IllegalHolidayArgumentException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class HolidayServiceTest {
 
-    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService();
+    private static final Ceo ceo = Ceo.getCeo();
+    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService(ceo);
     private static final HolidayService holidayService = new HolidayService(employeeFilterService);
-    private static final Ceo ceo = employeeFilterService.getCeo();
 
     @Test
     void should_find_holiday_by_id() {
-        LocalDate startDate = LocalDate.now().plusMonths(1);
-        LocalDate endDate = LocalDate.now().plusMonths(2);
+        final LocalDate startDate = LocalDate.now().plusMonths(1);
+        final LocalDate endDate = startDate.plusMonths(2);
 
         holidayService.addHoliday(ceo.getId(), startDate, endDate);
 
-        ceo.getHolidays().parallelStream()
+        Optional<Holiday> holiday = ceo.getHolidays().parallelStream()
                 .map(Holiday::getId)
                 .findFirst()
-                .flatMap(holidayId -> holidayService.findById(ceo.getId(), holidayId)).ifPresent((holiday) -> {
-                    assertThat(holiday.getStartDate()).isEqualTo(startDate);
-                    assertThat(holiday.getEndDate()).isEqualTo(endDate);
-                });
+                .flatMap(holidayId -> holidayService.findById(ceo.getId(), holidayId));
+
+        assertThat(holiday).isPresent();
+        assertThat(ceo.getHolidays()).contains(holiday.get());
     }
 
     @Test
@@ -56,16 +57,17 @@ class HolidayServiceTest {
         LocalDate startDate = LocalDate.now().plusMonths(1);
         LocalDate endDate = LocalDate.now().plusMonths(2);
 
-        ceo.setHolidays(new HashSet<>());
         holidayService.addHoliday(ceo.getId(), startDate, endDate);
 
-        ceo.getHolidays().parallelStream()
+        Optional<UUID> holidayId = ceo.getHolidays().parallelStream()
                 .map(Holiday::getId)
-                .findFirst()
-                .ifPresent(holidayId -> {
-                    holidayService.removeHoliday(ceo.getId(), holidayId);
-                    assertThat(ceo.getHolidays()).isEmpty();
-                });
+                .findFirst();
+
+        assertThat(holidayId).isPresent();
+
+        holidayService.removeHoliday(ceo.getId(), holidayId.get());
+        Optional<Holiday> holiday = holidayService.findById(ceo.getId(), holidayId.get());
+        assertThat(holiday).isNotPresent();
     }
 
     @Test
@@ -75,17 +77,21 @@ class HolidayServiceTest {
 
         holidayService.addHoliday(ceo.getId(), startDate, endDate);
 
-        ceo.getHolidays().parallelStream()
+        Optional<UUID> holidayId = ceo.getHolidays().parallelStream()
                 .map(Holiday::getId)
-                .findFirst()
-                .ifPresent(holidayId -> {
-                    LocalDate shiftedStartDate = startDate.plusMonths(1);
-                    LocalDate shiftedEndDate = startDate.plusMonths(2);
-                    holidayService.shiftHoliday(ceo.getId(), holidayId, shiftedStartDate, shiftedEndDate);
-                    holidayService.findById(ceo.getId(), holidayId).ifPresent((holiday) -> {
-                        assertThat(holiday.getStartDate()).isEqualTo(shiftedStartDate);
-                        assertThat(holiday.getEndDate()).isEqualTo(shiftedEndDate);
-                    });
-                });
+                .findFirst();
+
+        assertThat(holidayId).isPresent();
+
+        LocalDate shiftedStartDate = startDate.plusMonths(1);
+        LocalDate shiftedEndDate = startDate.plusMonths(2);
+        holidayService.shiftHoliday(ceo.getId(), holidayId.get(), shiftedStartDate, shiftedEndDate);
+
+        Optional<Holiday> holiday = holidayService.findById(ceo.getId(), holidayId.get());
+
+        assertThat(holiday).isPresent();
+
+        assertThat(holiday.get().getStartDate()).isEqualTo(shiftedStartDate);
+        assertThat(holiday.get().getEndDate()).isEqualTo(shiftedEndDate);
     }
 }

@@ -11,8 +11,8 @@ public class EmployeeFilterService {
 
     private final Ceo ceo;
 
-    public EmployeeFilterService() {
-        ceo = Ceo.getCeo();
+    public EmployeeFilterService(Ceo ceo) {
+        this.ceo = ceo;
     }
 
     public Ceo getCeo() {

@@ -43,7 +43,7 @@ class ContractorTest extends AbstractEmployeeTest<Contractor> {
     @Test
     void contractor_can_change_team() {
         Optional<Method> move = Arrays.stream(Contractor.class.getMethods())
-                .filter(method -> "move".equals(method.getName()))
+                .filter(method -> "moveTeam".equals(method.getName()))
                 .findFirst();
 
         assertThat(move).isPresent();
@@ -57,7 +57,7 @@ class ContractorTest extends AbstractEmployeeTest<Contractor> {
         assertThat(manager1.getSubordinates()).contains(contractor);
         assertThat(manager2.getSubordinates()).doesNotContain(contractor);
 
-        contractor.move(manager2);
+        contractor.moveTeam(manager2);
 
         assertThat(contractor.getManager()).isEqualTo(manager2);
         assertThat(manager2.getSubordinates()).contains(contractor);

@@ -11,9 +11,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OrganisationChartServiceTest {
 
-    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService();
-    private static final OrganisationChartService organisationChartService = new OrganisationChartService(employeeFilterService);
-    private static final Ceo ceo = employeeFilterService.getCeo();
+    private static final Ceo ceo = Ceo.getCeo();
+    private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService(ceo);
+    private static final OrganisationChartService organisationChartService = new OrganisationChartService(ceo, employeeFilterService);
 
     @Test
     void should_init_ceo_infos() {

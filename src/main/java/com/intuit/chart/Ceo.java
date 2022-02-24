@@ -9,15 +9,13 @@ public final class Ceo extends Employee implements Manage<VicePresident> {
 
     private Set<VicePresident> subordinates;
 
-    private static final Ceo ceo = new Ceo();
-
     private Ceo() {
         super(Role.Management.CEO);
         this.subordinates = new HashSet<>();
     }
 
     public static Ceo getCeo() {
-        return ceo;
+        return new Ceo();
     }
 
     @Override

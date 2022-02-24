@@ -42,7 +42,7 @@ class PermanentTest extends AbstractEmployeeTest<Permanent> {
     @Test
     void permanent_can_change_team() {
         Optional<Method> move = Arrays.stream(Permanent.class.getMethods())
-                .filter(method -> "move".equals(method.getName()))
+                .filter(method -> "moveTeam".equals(method.getName()))
                 .findFirst();
 
         assertThat(move).isPresent();
@@ -57,7 +57,7 @@ class PermanentTest extends AbstractEmployeeTest<Permanent> {
         assertThat(manager1.getSubordinates()).contains(permanent);
         assertThat(manager2.getSubordinates()).doesNotContain(permanent);
 
-        permanent.move(manager2);
+        permanent.moveTeam(manager2);
 
         assertThat(permanent.getManager()).isEqualTo(manager2);
         assertThat(manager2.getSubordinates()).contains(permanent);
