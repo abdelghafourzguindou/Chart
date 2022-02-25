@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * to be implemented by any Employee that can manage others
+ * To be implemented by any Employee that can manage others
  * @param <T>: Type of employee managed
  */
 public interface Manage<T extends ManagedEmployee<? extends Employee>> {
@@ -23,8 +23,14 @@ public interface Manage<T extends ManagedEmployee<? extends Employee>> {
      */
     Set<T> getSubordinates();
 
+    /**
+     * Add a new managed employee in this manager subordinates
+     * @param employee to add
+     */
     default void addSubordinate(T employee) {
+        // Add the new employee in manager subordinates
         getSubordinates().add(employee);
+        // Set this manager as the added managed employee manager
         employee.setManager(instance());
     }
 
@@ -33,7 +39,9 @@ public interface Manage<T extends ManagedEmployee<? extends Employee>> {
      * @param employees to be added
      */
     default void addSubordinates(Set<T> employees) {
+        // Add all the new subordinates
         getSubordinates().addAll(employees);
+        // Set this manager as the added managed employees manager
         employees.forEach(employee -> employee.setManager(instance()));
     }
 

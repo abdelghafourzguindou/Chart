@@ -6,13 +6,10 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
-public class HolidayService {
-
-    private final EmployeeFilterService employeeFilterService;
-
-    public HolidayService(EmployeeFilterService employeeFilterService) {
-        this.employeeFilterService = employeeFilterService;
-    }
+/**
+ * Is a holiday service to manage employee holidays
+ */
+public record HolidayService(EmployeeFilterService employeeFilterService) {
 
     public Optional<Holiday> findById(UUID employeeId, UUID holidayId) {
         return employeeFilterService.findById(employeeId)

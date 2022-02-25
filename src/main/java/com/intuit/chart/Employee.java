@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Abstract employee with the necessaries attributes
+ * Abstract employee with the necessary attributes
  * Employee can take holidays
  * Employee always have a role
  */
