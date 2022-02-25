@@ -5,6 +5,10 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Abstract managed employee by manager of type T
+ * @param <T> Manager type
+ */
 public abstract class ManagedEmployee<T extends Employee> extends Employee {
 
     @Getter

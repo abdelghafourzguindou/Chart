@@ -5,8 +5,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Ceo is an employee can manager vice presidents
+ * Ceo is not managed
+ * Ceo can not change team because he is the manager of all teams
+ */
 public final class Ceo extends Employee implements Manage<VicePresident> {
 
+    /**
+     * Ceo subordinates should be VicePresidents
+     */
     private Set<VicePresident> subordinates;
 
     private Ceo() {
@@ -14,6 +22,10 @@ public final class Ceo extends Employee implements Manage<VicePresident> {
         this.subordinates = new HashSet<>();
     }
 
+    /**
+     * A Ceo should be uniq inside the company, getCeo is a Factory of Ceo
+     * @return Ceo
+     */
     public static Ceo getCeo() {
         return new Ceo();
     }
@@ -43,6 +55,7 @@ public final class Ceo extends Employee implements Manage<VicePresident> {
         if (manager.isPresent()) {
             return manager;
         }
+        // if it's not a ceo search in vice presidents
         return subordinates.parallelStream()
                 .map(subordinate -> subordinate.findManagerById(id))
                 .filter(Optional::isPresent)

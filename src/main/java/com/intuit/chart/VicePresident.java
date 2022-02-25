@@ -5,8 +5,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Vice president is managed by a Ceo
+ * Vice president can manage Directors
+ * Vice president can not change team because he is always in Ceo team
+ */
 public final class VicePresident extends ManagedEmployee<Ceo> implements Manage<Director> {
 
+    /**
+     * Vice president subordinates are directors
+     */
     private Set<Director> subordinates;
 
     public VicePresident() {
@@ -39,6 +47,7 @@ public final class VicePresident extends ManagedEmployee<Ceo> implements Manage<
         if (manager.isPresent()) {
             return manager;
         }
+        // if not this vice president search in subordinates
         return subordinates.parallelStream()
                 .map(subordinate -> subordinate.findManagerById(id))
                 .filter(Optional::isPresent)

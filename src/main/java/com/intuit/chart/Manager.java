@@ -2,8 +2,16 @@ package com.intuit.chart;
 
 import java.util.*;
 
+/**
+ * Employee of type Manager is a managed employee by Director
+ * Manager can manage simple employees
+ * Manager can change team to another Director team
+ */
 public class Manager extends ManagedEmployee<Director> implements Manage<SimpleEmployee>, MoveTeam<Director> {
 
+    /**
+     * Manager subordinates are simple employees
+     */
     private Set<SimpleEmployee> subordinates;
 
     public Manager() {
@@ -11,6 +19,10 @@ public class Manager extends ManagedEmployee<Director> implements Manage<SimpleE
         this.subordinates = new HashSet<>();
     }
 
+    /**
+     * Used to created manager from promoted subordinate
+     * @param id of promoted subordinate
+     */
     private Manager(UUID id) {
         super(id, Role.Management.MANAGER);
         this.subordinates = new HashSet<>();
@@ -44,6 +56,7 @@ public class Manager extends ManagedEmployee<Director> implements Manage<SimpleE
 
     public void promoteSeniorSubordinate() {
         Optional<SimpleEmployee> employeeToBeManager = this.subordinates.parallelStream()
+                // The promoted simple employee should be a permanent employee
                 .filter(employee -> employee.getRole().equals(Role.Employee.PERMANENT))
                 .min(Comparator.comparing(Employee::getStartDate));
 
