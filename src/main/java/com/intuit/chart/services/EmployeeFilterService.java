@@ -1,11 +1,12 @@
 package com.intuit.chart.services;
 
-import com.intuit.chart.Ceo;
-import com.intuit.chart.Employee;
+import com.intuit.chart.*;
 import com.intuit.chart.exceptions.EmployeeNotFoundException;
-import com.intuit.chart.Manage;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class EmployeeFilterService {
 
@@ -17,6 +18,31 @@ public class EmployeeFilterService {
 
     public Ceo getCeo() {
         return ceo;
+    }
+
+    public Set<VicePresident> getVicePresidents() {
+        return ceo.getSubordinates();
+    }
+
+    public Set<Director> getDirectors() {
+        return getVicePresidents().parallelStream()
+                .map(VicePresident::getSubordinates)
+                .flatMap(Collection::parallelStream)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Manager> getManagers() {
+        return getDirectors().parallelStream()
+                .map(Director::getSubordinates)
+                .flatMap(Collection::parallelStream)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<SimpleEmployee> getSimpleEmployees() {
+        return getManagers().parallelStream()
+                .map(Manager::getSubordinates)
+                .flatMap(Collection::parallelStream)
+                .collect(Collectors.toSet());
     }
 
     public Employee findById(UUID employeeId) {

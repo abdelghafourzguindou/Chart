@@ -2,18 +2,82 @@ package com.intuit.chart.services;
 
 import com.intuit.chart.*;
 import com.intuit.chart.exceptions.EmployeeNotFoundException;
-import com.intuit.chart.exceptions.IllegalHolidayArgumentException;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EmployeeFilterServiceTest {
 
     private static final Ceo ceo = Ceo.getCeo();
     private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService(ceo);
+
+    @Test
+    void should_return_ceo() {
+        assertThat(employeeFilterService.getCeo()).isEqualTo(ceo);
+    }
+
+    @Test
+    void should_return_vice_presidents() {
+        Permanent permanent = new Permanent();
+        Manager manager = new Manager();
+        Director director = new Director();
+        VicePresident vicePresident = new VicePresident();
+
+        ceo.addSubordinate(vicePresident);
+        vicePresident.addSubordinate(director);
+        director.addSubordinate(manager);
+        manager.addSubordinate(permanent);
+
+        assertThat(employeeFilterService.getVicePresidents()).contains(vicePresident);
+    }
+
+    @Test
+    void should_return_directors() {
+        Permanent permanent = new Permanent();
+        Manager manager = new Manager();
+        Director director = new Director();
+        VicePresident vicePresident = new VicePresident();
+
+        ceo.addSubordinate(vicePresident);
+        vicePresident.addSubordinate(director);
+        director.addSubordinate(manager);
+        manager.addSubordinate(permanent);
+
+        assertThat(employeeFilterService.getDirectors()).contains(director);
+    }
+
+    @Test
+    void should_return_vice_managers() {
+        Permanent permanent = new Permanent();
+        Manager manager = new Manager();
+        Director director = new Director();
+        VicePresident vicePresident = new VicePresident();
+
+        ceo.addSubordinate(vicePresident);
+        vicePresident.addSubordinate(director);
+        director.addSubordinate(manager);
+        manager.addSubordinate(permanent);
+
+        assertThat(employeeFilterService.getManagers()).contains(manager);
+    }
+
+    @Test
+    void should_return_vice_simple_employee() {
+        Permanent permanent = new Permanent();
+        Manager manager = new Manager();
+        Director director = new Director();
+        VicePresident vicePresident = new VicePresident();
+
+        ceo.addSubordinate(vicePresident);
+        vicePresident.addSubordinate(director);
+        director.addSubordinate(manager);
+        manager.addSubordinate(permanent);
+
+        assertThat(employeeFilterService.getSimpleEmployees()).contains(permanent);
+    }
 
     @Test
     void should_find_employee_by_id_successfully() {
