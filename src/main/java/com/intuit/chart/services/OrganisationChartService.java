@@ -1,7 +1,6 @@
 package com.intuit.chart.services;
 
-import com.intuit.chart.Ceo;
-import com.intuit.chart.ManagedEmployee;
+import com.intuit.chart.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -27,6 +26,25 @@ public class OrganisationChartService {
     }
 
     public void moveTeam(UUID employeeId, UUID managerId) {
+        Manage<?> newManager = this.employeeFilterService.findManagerById(managerId);
 
+        this.employeeFilterService.getDirectors().parallelStream()
+                .filter(director -> director.getId().equals(employeeId))
+                .findFirst()
+                .ifPresentOrElse(director -> director.moveTeam((VicePresident) newManager), () -> managerMoveTeam(employeeId, newManager));
+    }
+
+    private void managerMoveTeam(UUID employeeId, Manage<?> newManager) {
+        this.employeeFilterService.getManagers().parallelStream()
+                .filter(manager -> manager.getId().equals(employeeId))
+                .findFirst()
+                .ifPresentOrElse(director -> director.moveTeam((Director) newManager), () -> simpleEmployeeMoveTeam(employeeId, newManager));
+    }
+
+    private void simpleEmployeeMoveTeam(UUID employeeId, Manage<?> newManager) {
+        this.employeeFilterService.getSimpleEmployees().parallelStream()
+                .filter(employee -> employee.getId().equals(employeeId))
+                .findFirst()
+                .ifPresent(director -> director.moveTeam((Manager) newManager));
     }
 }

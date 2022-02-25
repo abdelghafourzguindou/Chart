@@ -1,7 +1,6 @@
 package com.intuit.chart.services;
 
-import com.intuit.chart.Ceo;
-import com.intuit.chart.VicePresident;
+import com.intuit.chart.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,5 +35,27 @@ class OrganisationChartServiceTest {
 
         assertThat(ceo.getSubordinates()).contains(vicePresident);
         assertThat(vicePresident.getManager()).isEqualTo(ceo);
+    }
+
+    @Test
+    void employee_should_move_team() {
+        VicePresident vicePresident = new VicePresident();
+        Director director = new Director();
+        Manager manager1 = new Manager();
+        Manager manager2 = new Manager();
+        Permanent permanent1 = new Permanent();
+        Permanent permanent2 = new Permanent();
+
+        organisationChartService.addEmployee(vicePresident, ceo.getId());
+        organisationChartService.addEmployee(director, vicePresident.getId());
+        organisationChartService.addEmployee(manager1, director.getId());
+        organisationChartService.addEmployee(manager2, director.getId());
+        organisationChartService.addEmployee(permanent1, manager1.getId());
+        organisationChartService.addEmployee(permanent2, manager2.getId());
+
+        organisationChartService.moveTeam(permanent1.getId(), manager2.getId());
+
+        assertThat(manager2.getSubordinates()).contains(permanent1);
+        assertThat(manager1.getSubordinates()).doesNotContain(permanent1);
     }
 }
