@@ -6,27 +6,15 @@
     <groupId>com.intuit</groupId>
     <artifactId>Chart</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <name>Chart</name>
     <description>Chart</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
         <mockito-all.version>2.0.2-beta</mockito-all.version>
         <lombok.version>1.18.22</lombok.version>
-        <assertj-core.version>3.4.1</assertj-core.version>
+        <assertj-core.version>3.22.0</assertj-core.version>
         <equalsverifier.version>3.9</equalsverifier.version>
         <meanbean.version>2.0.3</meanbean.version>
     </properties>
@@ -67,5 +55,18 @@
             <version>${meanbean.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
