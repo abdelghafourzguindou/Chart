@@ -28,7 +28,7 @@ class HolidayServiceTest {
         Optional<Holiday> holiday = ceo.getHolidays().parallelStream()
                 .map(Holiday::getId)
                 .findFirst()
-                .flatMap(holidayId -> holidayService.findById(ceo.getId(), holidayId));
+                .flatMap(holidayId -> holidayService.findHolidayById(ceo.getId(), holidayId));
 
         assertThat(holiday).isPresent();
         assertThat(ceo.getHolidays()).contains(holiday.get());
@@ -66,7 +66,7 @@ class HolidayServiceTest {
         assertThat(holidayId).isPresent();
 
         holidayService.removeHoliday(ceo.getId(), holidayId.get());
-        Optional<Holiday> holiday = holidayService.findById(ceo.getId(), holidayId.get());
+        Optional<Holiday> holiday = holidayService.findHolidayById(ceo.getId(), holidayId.get());
         assertThat(holiday).isNotPresent();
     }
 
@@ -87,7 +87,7 @@ class HolidayServiceTest {
         LocalDate shiftedEndDate = startDate.plusMonths(2);
         holidayService.shiftHoliday(ceo.getId(), holidayId.get(), shiftedStartDate, shiftedEndDate);
 
-        Optional<Holiday> holiday = holidayService.findById(ceo.getId(), holidayId.get());
+        Optional<Holiday> holiday = holidayService.findHolidayById(ceo.getId(), holidayId.get());
 
         assertThat(holiday).isPresent();
 

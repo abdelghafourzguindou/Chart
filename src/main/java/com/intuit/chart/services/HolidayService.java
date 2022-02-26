@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public record HolidayService(EmployeeFilterService employeeFilterService) {
 
-    public Optional<Holiday> findById(UUID employeeId, UUID holidayId) {
+    public Optional<Holiday> findHolidayById(UUID employeeId, UUID holidayId) {
         return employeeFilterService.findById(employeeId)
                 .getHolidays()
                 .parallelStream()
