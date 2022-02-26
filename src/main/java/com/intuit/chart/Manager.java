@@ -54,6 +54,9 @@ public class Manager extends ManagedEmployee<Director> implements Manage<SimpleE
         newDirector.addSubordinate(this);
     }
 
+    /**
+     * Promote the most senior simple employee to be the new Manager for this manage team
+     */
     public void promoteSeniorSubordinate() {
         Optional<SimpleEmployee> employeeToBeManager = this.subordinates.parallelStream()
                 // The promoted simple employee should be a permanent employee
