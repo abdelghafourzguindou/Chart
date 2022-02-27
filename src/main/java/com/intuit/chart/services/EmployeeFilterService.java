@@ -11,7 +11,15 @@ import java.util.stream.Collectors;
 /**
  * Is a service that used to filter in employees
  */
-public record EmployeeFilterService(Ceo ceo) {
+public class EmployeeFilterService {
+
+    private final Ceo ceo;
+
+    /**
+     */
+    public EmployeeFilterService(Ceo ceo) {
+        this.ceo = ceo;
+    }
 
     /**
      * return the uniq company Ceo

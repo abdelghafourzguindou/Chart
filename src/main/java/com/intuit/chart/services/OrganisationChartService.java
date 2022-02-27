@@ -9,18 +9,16 @@ import java.util.UUID;
  * Is a service used to manage employees
  * Organisation char has one Ceo
  */
-public class OrganisationChartService {
+public final class OrganisationChartService {
 
+    private final Ceo ceo;
     private final EmployeeFilterService employeeFilterService;
 
     /**
-     * Ceo of the created chart is uniq
      */
-    private static Ceo ceo;
-
     public OrganisationChartService(Ceo ceo, EmployeeFilterService employeeFilterService) {
+        this.ceo = ceo;
         this.employeeFilterService = employeeFilterService;
-        OrganisationChartService.ceo = ceo;
     }
 
     /**

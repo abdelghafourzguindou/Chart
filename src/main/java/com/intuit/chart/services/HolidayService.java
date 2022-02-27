@@ -9,7 +9,15 @@ import java.util.UUID;
 /**
  * Is a holiday service to manage employee holidays
  */
-public record HolidayService(EmployeeFilterService employeeFilterService) {
+public class HolidayService {
+
+    private final EmployeeFilterService employeeFilterService;
+
+    /**
+     */
+    public HolidayService(EmployeeFilterService employeeFilterService) {
+        this.employeeFilterService = employeeFilterService;
+    }
 
     public Optional<Holiday> findHolidayById(UUID employeeId, UUID holidayId) {
         return employeeFilterService.findById(employeeId)
