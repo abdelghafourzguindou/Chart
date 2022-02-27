@@ -7,12 +7,18 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class OrganisationChartServiceTest {
 
     private static final Ceo ceo = Ceo.getCeo();
     private static final EmployeeFilterService employeeFilterService = new EmployeeFilterService(ceo);
     private static final OrganisationChartService organisationChartService = new OrganisationChartService(ceo, employeeFilterService);
+
+    @Test
+    void ceo_should_be_one_instance() {
+        assertSame(ceo, employeeFilterService.getCeo());
+    }
 
     @Test
     void should_init_ceo_infos() {
